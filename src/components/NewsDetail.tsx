@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Share2, ArrowLeft, Bookmark, BookmarkCheck, Twitter, Facebook } from 'lucide-react';
+import { Share2, ArrowLeft, Twitter, Facebook } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 const NewsDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { cachedNews, toggleBookmark, bookmarkedNews } = useStore();
+  const { cachedNews } = useStore();
   const { t } = useTranslation();
   const [news, setNews] = useState<any | null>(null);
 
@@ -32,8 +32,6 @@ const NewsDetail: React.FC = () => {
       </div>
     );
   }
-
-  const isBookmarked = bookmarkedNews.some((item) => item.id === news.id);
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -65,11 +63,6 @@ const NewsDetail: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors">
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        {t('back')}
-      </Link>
-
       <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
         <div className="relative h-64 md:h-96 w-full">
           <img
@@ -108,13 +101,6 @@ const NewsDetail: React.FC = () => {
               </div>
             </div>
             <div className="flex space-x-3">
-              <button
-                onClick={() => toggleBookmark(news)}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300"
-                title={isBookmarked ? 'Remove Bookmark' : 'Bookmark'}
-              >
-                {isBookmarked ? <BookmarkCheck className="w-5 h-5 text-green-600" /> : <Bookmark className="w-5 h-5" />}
-              </button>
               <button
                 onClick={handleTwitterShare}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300"

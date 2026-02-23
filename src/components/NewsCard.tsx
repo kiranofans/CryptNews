@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { Share2, Bookmark, BookmarkCheck, Twitter, Facebook } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { Share2, Twitter, Facebook } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface NewsItem {
@@ -22,8 +21,6 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
   const { t } = useTranslation();
-  const { toggleBookmark, bookmarkedNews } = useStore();
-  const isBookmarked = bookmarkedNews.some((item) => item.id === news.id);
 
   const handleShare = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,12 +57,6 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
   };
 
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleBookmark(news);
-  };
-
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full border border-gray-100 dark:border-gray-700">
       <Link to={`/news/${news.id}`} className="block relative h-48 overflow-hidden">
@@ -78,14 +69,6 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
             (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/crypto/600/400';
           }}
         />
-        <div className="absolute top-2 right-2 flex space-x-2">
-           <button
-            onClick={handleBookmark}
-            className="p-2 bg-white/80 dark:bg-black/50 backdrop-blur-sm rounded-full hover:bg-white dark:hover:bg-black transition-colors"
-          >
-            {isBookmarked ? <BookmarkCheck className="w-4 h-4 text-green-600" /> : <Bookmark className="w-4 h-4 text-gray-700 dark:text-gray-200" />}
-          </button>
-        </div>
       </Link>
       <div className="p-4 flex flex-col flex-grow">
         <div className="flex items-center justify-between mb-2 text-xs text-gray-500 dark:text-gray-400">
