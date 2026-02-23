@@ -60,8 +60,8 @@ const HeroSlider: React.FC = () => {
             {currentNews.title}
           </h2>
         </Link>
-        <p className="text-xs sm:text-sm md:text-base text-gray-200 line-clamp-2 mb-2 md:mb-4 drop-shadow-sm hidden sm:block">
-          {currentNews.body}
+        <p className="text-xs sm:text-sm md:text-base text-gray-200 line-clamp-2 mb-2 md:mb-4 drop-shadow-sm hidden sm:block overflow-hidden">
+          {currentNews.body.length > 150 ? `${currentNews.body.substring(0, 150)}...` : currentNews.body}
         </p>
         <div className="flex space-x-2">
           {cachedNews.slice(0, 5).map((_, index) => (
