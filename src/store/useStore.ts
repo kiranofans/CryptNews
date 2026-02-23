@@ -8,11 +8,13 @@ interface AppState {
   bookmarkedNews: any[];
   searchTerm: string;
   isLoading: boolean;
+  newPostsAvailable: boolean;
   setLanguage: (lang: string) => void;
   setFiat: (fiat: string) => void;
   setCachedNews: (news: any[]) => void;
   setSearchTerm: (term: string) => void;
   setIsLoading: (loading: boolean) => void;
+  setNewPostsAvailable: (available: boolean) => void;
   toggleBookmark: (newsItem: any) => void;
 }
 
@@ -25,11 +27,13 @@ export const useStore = create<AppState>()(
       bookmarkedNews: [],
       searchTerm: '',
       isLoading: false,
+      newPostsAvailable: false,
       setLanguage: (lang) => set({ language: lang }),
       setFiat: (fiat) => set({ fiat }),
       setCachedNews: (news) => set({ cachedNews: news }),
       setSearchTerm: (term) => set({ searchTerm: term }),
       setIsLoading: (loading) => set({ isLoading: loading }),
+      setNewPostsAvailable: (available) => set({ newPostsAvailable: available }),
       toggleBookmark: (newsItem) =>
         set((state) => {
           const isBookmarked = state.bookmarkedNews.some((item) => item.id === newsItem.id);

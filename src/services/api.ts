@@ -37,8 +37,9 @@ api.interceptors.response.use(
   }
 );
 
-export const fetchNews = async (lang: string = 'EN') => {
-  const response = await api.get(`/v2/news/?lang=${lang}`);
+export const fetchNews = async (lang: string = 'EN', lTs?: number) => {
+  const url = lTs ? `/v2/news/?lang=${lang}&lTs=${lTs}` : `/v2/news/?lang=${lang}`;
+  const response = await api.get(url);
   return response.data.Data;
 };
 

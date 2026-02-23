@@ -11,11 +11,10 @@ import { fetchNews } from './services/api';
 import './i18n';
 
 const App: React.FC = () => {
-  const { setLanguage, searchTerm, setSearchTerm, cachedNews, setCachedNews, setIsLoading } = useStore();
+  const { setLanguage, searchTerm, setSearchTerm, cachedNews, setCachedNews, setIsLoading, newPostsAvailable, setNewPostsAvailable } = useStore();
   const { t, i18n } = useTranslation();
   const [countryFlag, setCountryFlag] = useState<string>('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [newPostsAvailable, setNewPostsAvailable] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadNews = async () => {
@@ -198,18 +197,6 @@ const App: React.FC = () => {
           
           <PriceTicker />
         </header>
-
-        {newPostsAvailable && (
-          <div className="flex justify-center my-4 sticky top-20 z-30">
-            <button
-              onClick={loadNews}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full shadow-lg flex items-center space-x-2 transition-transform transform hover:scale-105 animate-bounce"
-            >
-              <RefreshCw className="w-4 h-4 animate-spin" />
-              <span>{t('new_posts_available')}</span>
-            </button>
-          </div>
-        )}
 
         {error && (
           <div className="container mx-auto px-4 mt-4">
