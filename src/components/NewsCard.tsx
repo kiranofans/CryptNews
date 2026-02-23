@@ -77,14 +77,11 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
           </span>
           <span>{formatDistanceToNow(new Date(news.published_on * 1000), { addSuffix: true })}</span>
         </div>
-        <Link to={`/news/${news.id}`} className="block mb-2">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+        <Link to={`/news/${news.id}`} className="block mb-4 flex-grow">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             {news.title}
           </h3>
         </Link>
-        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-4 flex-grow">
-          {news.body}
-        </p>
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
           <Link
             to={`/news/${news.id}`}
