@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore';
 import NewsCard from './NewsCard';
 import HeroSlider from './HeroSlider';
 import { useTranslation } from 'react-i18next';
-import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 import { fetchNews } from '../services/api';
 
 const NewsFeed: React.FC = () => {
@@ -66,11 +66,11 @@ const NewsFeed: React.FC = () => {
   }, [hasMore, isFetchingMore]);
 
   return (
-    <div className="container mx-auto px-4 py-8 relative">
+    <div className="container mx-auto px-4 pt-2 pb-8 relative">
       <div className="relative">
         <HeroSlider />
         {newPostsAvailable && (
-          <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-md px-4">
+          <div className="absolute top-10 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-md px-4">
             <button
               onClick={handleRefresh}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full shadow-lg flex items-center justify-center space-x-3 transition-transform transform hover:scale-105 animate-bounce"

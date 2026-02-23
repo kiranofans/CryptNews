@@ -61,10 +61,17 @@ const NewsDetail: React.FC = () => {
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
   };
 
+  const handlePinterestShare = () => {
+    const url = encodeURIComponent(news.url);
+    const media = encodeURIComponent(news.imageurl);
+    const description = encodeURIComponent(news.title);
+    window.open(`https://pinterest.com/pin/create/button/?url=${url}&media=${media}&description=${description}`, '_blank');
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
-        <div className="relative h-64 md:h-96 w-full">
+        <div className="relative h-64 md:h-96 w-full group">
           <img
             src={news.imageurl}
             alt={news.title}
@@ -73,6 +80,20 @@ const NewsDetail: React.FC = () => {
               (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/crypto/1200/800';
             }}
           />
+          
+          {/* Pinterest Button - Desktop Only */}
+          <button
+            onClick={handlePinterestShare}
+            className="absolute top-4 left-4 z-20 hidden md:flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 font-bold text-sm"
+            title="Pin on Pinterest"
+            aria-label="Pin on Pinterest"
+          >
+            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.399.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.173 0 7.41 2.967 7.41 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.367 18.62 0 12.017 0z" />
+            </svg>
+            Save
+          </button>
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 p-6 md:p-8 text-white w-full">
             <div className="flex items-center space-x-2 mb-3">
@@ -83,14 +104,11 @@ const NewsDetail: React.FC = () => {
                 {formatDistanceToNow(new Date(news.published_on * 1000), { addSuffix: true })}
               </span>
             </div>
-            <h1 className="text-2xl md:text-4xl font-bold leading-tight drop-shadow-md">
-              {news.title}
-            </h1>
           </div>
         </div>
 
         <div className="p-6 md:p-8">
-          <div className="flex items-center justify-between mb-8 border-b border-gray-100 dark:border-gray-700 pb-4">
+          <div className="flex items-center justify-between mb-4 border-b border-gray-100 dark:border-gray-700 pb-4">
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 font-bold">
                 {news.source.charAt(0)}
@@ -125,6 +143,9 @@ const NewsDetail: React.FC = () => {
             </div>
           </div>
 
+          <h1 className="text-2xl md:text-4xl font-bold leading-tight text-gray-900 dark:text-white mb-6">
+            {news.title}
+          </h1>
           <div className="prose dark:prose-invert max-w-none mb-8">
             <p className="text-lg leading-relaxed text-gray-800 dark:text-gray-200">
               {news.body}
