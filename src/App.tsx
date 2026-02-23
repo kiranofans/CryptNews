@@ -11,9 +11,8 @@ import { fetchNews } from './services/api';
 import './i18n';
 
 const App: React.FC = () => {
-  const { setLanguage, searchTerm, setSearchTerm, cachedNews, setCachedNews, setIsLoading, newPostsAvailable, setNewPostsAvailable } = useStore();
+  const { searchTerm, setSearchTerm, cachedNews, setCachedNews, setIsLoading, newPostsAvailable, setNewPostsAvailable } = useStore();
   const { t, i18n } = useTranslation();
-  const [countryFlag, setCountryFlag] = useState<string>('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,56 +65,6 @@ const App: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            // Use a free reverse geocoding API (BigDataCloud)
-            const response = await fetch(
-              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-            );
-            const data = await response.json();
-            
-            if (data && data.countryCode) {
-              // Set flag emoji based on country code
-              const codePoints = data.countryCode
-                .toUpperCase()
-                .split('')
-                .map((char: string) => 127397 + char.charCodeAt(0));
-              setCountryFlag(String.fromCodePoint(...codePoints));
-
-              // Map country to language if possible
-              const countryToLang: Record<string, string> = {
-                'BR': 'PT',
-                'PT': 'PT',
-                'ES': 'ES',
-                'MX': 'ES',
-                'AR': 'ES',
-                'CO': 'ES',
-                'FR': 'FR',
-                'US': 'EN',
-                'GB': 'EN',
-                'CA': 'EN',
-                'AU': 'EN',
-              };
-
-              if (countryToLang[data.countryCode]) {
-                setLanguage(countryToLang[data.countryCode]);
-              }
-            }
-          } catch (error) {
-            console.error('Error fetching country data:', error);
-          }
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-        }
-      );
-    }
-  }, [setLanguage]);
-
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300 font-sans">
@@ -126,10 +75,10 @@ const App: React.FC = () => {
                 C
               </div>
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 hidden sm:inline">
-                CryptNews {countryFlag && <span className="ml-2 text-2xl" role="img" aria-label="Country Flag">{countryFlag}</span>}
+                CryptNews
               </span>
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 sm:hidden">
-                CN {countryFlag && <span className="ml-1 text-xl" role="img" aria-label="Country Flag">{countryFlag}</span>}
+                CryptNews
               </span>
             </Link>
 
@@ -207,7 +156,7 @@ const App: React.FC = () => {
           </div>
         )}
 
-        <main className="pb-20">
+        <main className="pb-8">
           <Routes>
             <Route path="/" element={<NewsFeed />} />
             <Route path="/news/:id" element={<NewsDetail />} />

@@ -70,13 +70,13 @@ const NewsFeed: React.FC = () => {
       <div className="relative">
         <HeroSlider />
         {newPostsAvailable && (
-          <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-30">
+          <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-md px-4">
             <button
               onClick={handleRefresh}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full shadow-lg flex items-center space-x-2 transition-transform transform hover:scale-105 animate-bounce"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-full shadow-lg flex items-center justify-center space-x-3 transition-transform transform hover:scale-105 animate-bounce"
             >
               <RefreshCw className="w-4 h-4 animate-spin" />
-              <span>{t('new_posts_available')}</span>
+              <span className="tracking-wide">{t('new_posts_available')}</span>
             </button>
           </div>
         )}
@@ -107,14 +107,14 @@ const NewsFeed: React.FC = () => {
         <>
           {filteredNews.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-4">
                 {currentItems.map((news) => (
                   <NewsCard key={news.id} news={news} />
                 ))}
               </div>
 
               {/* Infinite Scroll Loader & End Message */}
-              <div ref={loaderRef} className="py-8 flex justify-center items-center flex-col">
+              <div ref={loaderRef} className="py-4 flex justify-center items-center flex-col">
                 {hasMore ? (
                   isFetchingMore && (
                     <div className="flex items-center text-blue-600 dark:text-blue-400">
