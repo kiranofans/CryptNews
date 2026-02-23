@@ -1,0 +1,5 @@
+{
+  "name": "CryptNews",
+  "description": "Real-time crypto news and price alerts",
+  "requestFramePermissions": ["geolocation", "notifications"]
+}

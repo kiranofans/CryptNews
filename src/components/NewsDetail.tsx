@@ -1,0 +1,167 @@
+import React, { useState, useEffect } from 'react';
+import { useStore } from '../store/useStore';
+import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Share2, ArrowLeft, Bookmark, BookmarkCheck, Twitter, Facebook } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+
+const NewsDetail: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const { cachedNews, toggleBookmark, bookmarkedNews } = useStore();
+  const { t } = useTranslation();
+  const [news, setNews] = useState<any | null>(null);
+
+  useEffect(() => {
+    if (id && cachedNews) {
+      const foundNews = cachedNews.find((n) => n.id === id);
+      if (foundNews) {
+        setNews(foundNews);
+      }
+    }
+  }, [id, cachedNews]);
+
+  if (!news) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center px-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <p className="text-gray-500 mb-4">{t('loading_news')}...</p>
+        <p className="text-sm text-gray-400">If this takes too long, the news might not be available anymore.</p>
+        <Link to="/" className="mt-4 text-blue-600 hover:underline">
+          {t('back')}
+        </Link>
+      </div>
+    );
+  }
+
+  const isBookmarked = bookmarkedNews.some((item) => item.id === news.id);
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: news.title,
+          text: news.body.substring(0, 100) + '...',
+          url: news.url,
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      navigator.clipboard.writeText(news.url);
+      alert(t('copied'));
+    }
+  };
+
+  const handleTwitterShare = () => {
+    const text = encodeURIComponent(news.title);
+    const url = encodeURIComponent(news.url);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+  };
+
+  const handleFacebookShare = () => {
+    const url = encodeURIComponent(news.url);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors">
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        {t('back')}
+      </Link>
+
+      <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <div className="relative h-64 md:h-96 w-full">
+          <img
+            src={news.imageurl}
+            alt={news.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/crypto/1200/800';
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute bottom-0 left-0 p-6 md:p-8 text-white w-full">
+            <div className="flex items-center space-x-2 mb-3">
+              <span className="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded uppercase">
+                {news.source}
+              </span>
+              <span className="text-sm opacity-90">
+                {formatDistanceToNow(new Date(news.published_on * 1000), { addSuffix: true })}
+              </span>
+            </div>
+            <h1 className="text-2xl md:text-4xl font-bold leading-tight drop-shadow-md">
+              {news.title}
+            </h1>
+          </div>
+        </div>
+
+        <div className="p-6 md:p-8">
+          <div className="flex items-center justify-between mb-8 border-b border-gray-100 dark:border-gray-700 pb-4">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 font-bold">
+                {news.source.charAt(0)}
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{news.source}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t('author')}: {news.author || 'Unknown'}</p>
+              </div>
+            </div>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => toggleBookmark(news)}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300"
+                title={isBookmarked ? 'Remove Bookmark' : 'Bookmark'}
+              >
+                {isBookmarked ? <BookmarkCheck className="w-5 h-5 text-green-600" /> : <Bookmark className="w-5 h-5" />}
+              </button>
+              <button
+                onClick={handleTwitterShare}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300"
+                title="Share on Twitter"
+              >
+                <Twitter className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleFacebookShare}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300"
+                title="Share on Facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleShare}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300"
+                title="Share"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          <div className="prose dark:prose-invert max-w-none mb-8">
+            <p className="text-lg leading-relaxed text-gray-800 dark:text-gray-200">
+              {news.body}
+            </p>
+            {/* Since the API might return truncated content, we usually link to the full article */}
+            <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+              <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
+                This is a preview. Read the full story at the source.
+              </p>
+              <a
+                href={news.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors shadow-sm hover:shadow-md"
+              >
+                {t('read_full_article')}
+              </a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+};
+
+export default NewsDetail;
