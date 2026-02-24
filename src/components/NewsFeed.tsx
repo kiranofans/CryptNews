@@ -28,11 +28,13 @@ const NewsFeed: React.FC = () => {
     }
   };
 
-  const filteredNews = cachedNews.filter((news) =>
-    news.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    news.body.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    news.categories.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredNews = cachedNews.filter((news) => {
+    const term = searchTerm.toLowerCase();
+    const titleMatch = news.title?.toLowerCase().includes(term) || false;
+    const bodyMatch = news.body?.toLowerCase().includes(term) || false;
+    const categoriesMatch = news.categories?.toLowerCase().includes(term) || false;
+    return titleMatch || bodyMatch || categoriesMatch;
+  });
 
   // Reset to first page when search term changes
   useEffect(() => {

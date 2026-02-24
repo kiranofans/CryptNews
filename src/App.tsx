@@ -20,8 +20,12 @@ const HeaderContent: React.FC = () => {
   const isHomePage = location.pathname === '/';
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+    <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm flex flex-col">
+      <div className="order-2 md:order-1 w-full">
+        <PriceTicker />
+      </div>
+      
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center order-1 md:order-2 w-full">
         <div className="flex items-center space-x-4">
           {!isHomePage && (
             <button
@@ -82,7 +86,7 @@ const HeaderContent: React.FC = () => {
 
       {/* Mobile Search Bar (Expandable) */}
       {isSearchOpen && (
-        <div className="md:hidden px-4 pb-4 animate-in slide-in-from-top-2 duration-200">
+        <div className="md:hidden px-4 pb-4 animate-in slide-in-from-top-2 duration-200 order-3 w-full">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
@@ -106,8 +110,6 @@ const HeaderContent: React.FC = () => {
           </div>
         </div>
       )}
-      
-      <PriceTicker />
     </header>
   );
 };

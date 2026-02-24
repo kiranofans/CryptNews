@@ -46,6 +46,12 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'cryptnews-storage', // unique name
+      partialize: (state) => ({
+        language: state.language,
+        fiat: state.fiat,
+        cachedNews: state.cachedNews,
+        bookmarkedNews: state.bookmarkedNews,
+      }),
     }
   )
 );

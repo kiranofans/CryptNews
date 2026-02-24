@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'https://min-api.cryptocompare.com/data',
-  timeout: 10000,
+  timeout: 30000,
 });
 
 // Add a request interceptor
