@@ -16,6 +16,9 @@ interface AppState {
   setIsLoading: (loading: boolean) => void;
   setNewPostsAvailable: (available: boolean) => void;
   toggleBookmark: (newsItem: any) => void;
+  searchHistory: string[];
+  addToSearchHistory: (term: string) => void;
+  clearSearchHistory: () => void;
 }
 
 export const useStore = create<AppState>()(
@@ -28,12 +31,19 @@ export const useStore = create<AppState>()(
       searchTerm: '',
       isLoading: false,
       newPostsAvailable: false,
+      searchHistory: [],
       setLanguage: (lang) => set({ language: lang }),
       setFiat: (fiat) => set({ fiat }),
       setCachedNews: (news) => set({ cachedNews: news }),
       setSearchTerm: (term) => set({ searchTerm: term }),
       setIsLoading: (loading) => set({ isLoading: loading }),
       setNewPostsAvailable: (available) => set({ newPostsAvailable: available }),
+      addToSearchHistory: (term) =>
+        set((state) => {
+          const newHistory = [term, ...state.searchHistory.filter((t) => t !== term)].slice(0, 5);
+          return { searchHistory: newHistory };
+        }),
+      clearSearchHistory: () => set({ searchHistory: [] }),
       toggleBookmark: (newsItem) =>
         set((state) => {
           const isBookmarked = state.bookmarkedNews.some((item) => item.id === newsItem.id);
@@ -51,6 +61,7 @@ export const useStore = create<AppState>()(
         fiat: state.fiat,
         cachedNews: state.cachedNews,
         bookmarkedNews: state.bookmarkedNews,
+        searchHistory: state.searchHistory,
       }),
     }
   )

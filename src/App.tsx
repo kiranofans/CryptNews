@@ -15,20 +15,42 @@ import SearchResult from './components/SearchResult';
 // ... imports ...
 
 const HeaderContent: React.FC = () => {
-  const { searchTerm, setSearchTerm } = useStore();
+  const { searchTerm, setSearchTerm, searchHistory, addToSearchHistory } = useStore();
   const { t } = useTranslation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const searchRef = React.useRef<HTMLDivElement>(null);
 
   const isHomePage = location.pathname === '/';
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowHistory(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
+      addToSearchHistory(searchTerm.trim());
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
       setIsSearchOpen(false);
+      setShowHistory(false);
     }
+  };
+
+  const handleHistoryClick = (term: string) => {
+    setSearchTerm(term);
+    navigate(`/search?q=${encodeURIComponent(term)}`);
+    setIsSearchOpen(false);
+    setShowHistory(false);
   };
 
   return (
@@ -62,27 +84,52 @@ const HeaderContent: React.FC = () => {
         </div>
 
         {/* Desktop Search Bar */}
-        <form onSubmit={handleSearch} className="hidden md:block relative w-96 mx-4">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder={t('search_placeholder')}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow shadow-sm"
-          />
-          {searchTerm && (
-            <button
-              type="button"
-              onClick={() => setSearchTerm('')}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-            >
-              <X className="h-4 w-4" />
-            </button>
+        <div className="hidden md:block relative w-96 mx-4" ref={searchRef}>
+          <form onSubmit={handleSearch}>
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder={t('search_placeholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => setShowHistory(true)}
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-shadow shadow-sm"
+            />
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </form>
+          
+          {/* Search History Dropdown */}
+          {showHistory && searchHistory.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+              <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-900/50">
+                Recent Searches
+              </div>
+              <ul>
+                {searchHistory.map((term, index) => (
+                  <li key={index}>
+                    <button
+                      onClick={() => handleHistoryClick(term)}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+                    >
+                      <Search className="w-4 h-4 mr-2 text-gray-400" />
+                      {term}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
-        </form>
+        </div>
 
         <div className="flex items-center space-x-2">
           {/* Mobile Search Toggle */}
