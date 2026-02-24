@@ -88,7 +88,7 @@ const SearchResult: React.FC = () => {
                 </div>
               )
             ) : (
-              <div className="text-gray-500 dark:text-gray-400 font-medium text-center mt-8">
+              <div className="text-gray-500 dark:text-gray-400 font-medium text-center mt-2">
                 <p>End of results</p>
               </div>
             )}

@@ -12,6 +12,7 @@ interface AppState {
   setLanguage: (lang: string) => void;
   setFiat: (fiat: string) => void;
   setCachedNews: (news: any[]) => void;
+  appendCachedNews: (news: any[]) => void;
   setSearchTerm: (term: string) => void;
   setIsLoading: (loading: boolean) => void;
   setNewPostsAvailable: (available: boolean) => void;
@@ -35,6 +36,13 @@ export const useStore = create<AppState>()(
       setLanguage: (lang) => set({ language: lang }),
       setFiat: (fiat) => set({ fiat }),
       setCachedNews: (news) => set({ cachedNews: news }),
+      appendCachedNews: (news) =>
+        set((state) => {
+          // Filter out duplicates based on ID
+          const existingIds = new Set(state.cachedNews.map((n) => n.id));
+          const uniqueNewNews = news.filter((n) => !existingIds.has(n.id));
+          return { cachedNews: [...state.cachedNews, ...uniqueNewNews] };
+        }),
       setSearchTerm: (term) => set({ searchTerm: term }),
       setIsLoading: (loading) => set({ isLoading: loading }),
       setNewPostsAvailable: (available) => set({ newPostsAvailable: available }),

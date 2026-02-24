@@ -7,7 +7,7 @@ import { Loader2, RefreshCw } from 'lucide-react';
 import { fetchNews } from '../services/api';
 
 const NewsFeed: React.FC = () => {
-  const { cachedNews, searchTerm, isLoading, newPostsAvailable, setCachedNews, setNewPostsAvailable, setIsLoading } = useStore();
+  const { cachedNews, searchTerm, isLoading, newPostsAvailable, setCachedNews, appendCachedNews, setNewPostsAvailable, setIsLoading } = useStore();
   const { t, i18n } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
@@ -47,18 +47,39 @@ const NewsFeed: React.FC = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const currentItems = filteredNews.slice(0, indexOfLastItem);
-  const hasMore = indexOfLastItem < filteredNews.length;
+  // Check if we have more local items OR if we can fetch more from API (only when not searching)
+  const hasMoreLocal = indexOfLastItem < filteredNews.length;
+  const canFetchMore = !searchTerm && cachedNews.length > 0;
+  const hasMore = hasMoreLocal || canFetchMore;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isFetchingMore) {
-          setIsFetchingMore(true);
-          // Simulate network delay for loading next page
-          setTimeout(() => {
-            setCurrentPage((prev) => prev + 1);
-            setIsFetchingMore(false);
-          }, 800);
+      async (entries) => {
+        if (entries[0].isIntersecting && !isFetchingMore) {
+          if (hasMoreLocal) {
+            setIsFetchingMore(true);
+            setTimeout(() => {
+              setCurrentPage((prev) => prev + 1);
+              setIsFetchingMore(false);
+            }, 800);
+          } else if (canFetchMore) {
+            setIsFetchingMore(true);
+            try {
+              const lastNews = cachedNews[cachedNews.length - 1];
+              // Fetch older news using the timestamp of the last item
+              const olderNews = await fetchNews(i18n.language, lastNews.published_on);
+              
+              if (olderNews && olderNews.length > 0) {
+                appendCachedNews(olderNews);
+                // Increment page to show the newly fetched items
+                setCurrentPage((prev) => prev + 1);
+              }
+            } catch (err) {
+              console.error('Failed to fetch older news', err);
+            } finally {
+              setIsFetchingMore(false);
+            }
+          }
         }
       },
       { threshold: 0.1 }
@@ -69,7 +90,7 @@ const NewsFeed: React.FC = () => {
     }
 
     return () => observer.disconnect();
-  }, [hasMore, isFetchingMore]);
+  }, [hasMoreLocal, canFetchMore, isFetchingMore, cachedNews, i18n.language, appendCachedNews, searchTerm]);
 
   return (
     <div className="container mx-auto px-4 pt-2 pb-8 relative">
