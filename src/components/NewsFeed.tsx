@@ -29,11 +29,15 @@ const NewsFeed: React.FC = () => {
   };
 
   const filteredNews = cachedNews.filter((news) => {
-    const term = searchTerm.toLowerCase();
-    const titleMatch = news.title?.toLowerCase().includes(term) || false;
-    const bodyMatch = news.body?.toLowerCase().includes(term) || false;
-    const categoriesMatch = news.categories?.toLowerCase().includes(term) || false;
-    return titleMatch || bodyMatch || categoriesMatch;
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return true;
+    
+    const title = String(news.title || '').toLowerCase();
+    const body = String(news.body || '').toLowerCase();
+    const categories = String(news.categories || '').toLowerCase();
+    
+    return title.includes(term) || body.includes(term) || categories.includes(term);
   });
 
   // Reset to first page when search term changes

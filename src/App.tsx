@@ -10,14 +10,26 @@ import { useTranslation } from 'react-i18next';
 import { fetchNews } from './services/api';
 import './i18n';
 
+import SearchResult from './components/SearchResult';
+
+// ... imports ...
+
 const HeaderContent: React.FC = () => {
-  const { searchTerm, setSearchTerm, newPostsAvailable } = useStore();
+  const { searchTerm, setSearchTerm } = useStore();
   const { t } = useTranslation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   const isHomePage = location.pathname === '/';
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+      setIsSearchOpen(false);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm flex flex-col">
@@ -50,7 +62,7 @@ const HeaderContent: React.FC = () => {
         </div>
 
         {/* Desktop Search Bar */}
-        <div className="hidden md:block relative w-96 mx-4">
+        <form onSubmit={handleSearch} className="hidden md:block relative w-96 mx-4">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-gray-400" />
           </div>
@@ -63,13 +75,14 @@ const HeaderContent: React.FC = () => {
           />
           {searchTerm && (
             <button
+              type="button"
               onClick={() => setSearchTerm('')}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
             >
               <X className="h-4 w-4" />
             </button>
           )}
-        </div>
+        </form>
 
         <div className="flex items-center space-x-2">
           {/* Mobile Search Toggle */}
@@ -87,7 +100,7 @@ const HeaderContent: React.FC = () => {
       {/* Mobile Search Bar (Expandable) */}
       {isSearchOpen && (
         <div className="md:hidden px-4 pb-4 animate-in slide-in-from-top-2 duration-200 order-3 w-full">
-          <div className="relative">
+          <form onSubmit={handleSearch} className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
             </div>
@@ -101,13 +114,14 @@ const HeaderContent: React.FC = () => {
             />
             {searchTerm && (
               <button
+                type="button"
                 onClick={() => setSearchTerm('')}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
               >
                 <X className="h-5 w-5" />
               </button>
             )}
-          </div>
+          </form>
         </div>
       )}
     </header>
@@ -186,6 +200,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<NewsFeed />} />
             <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/search" element={<SearchResult />} />
           </Routes>
         </main>
 
