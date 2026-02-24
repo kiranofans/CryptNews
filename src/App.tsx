@@ -176,9 +176,16 @@ const HeaderContent: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const { cachedNews, setCachedNews, setIsLoading, setNewPostsAvailable } = useStore();
+  const { cachedNews, setCachedNews, setIsLoading, setNewPostsAvailable, language } = useStore();
   const { t, i18n } = useTranslation();
   const [error, setError] = useState<string | null>(null);
+
+  // Sync language from store to i18n on mount
+  useEffect(() => {
+    if (language && i18n.language !== language) {
+      i18n.changeLanguage(language);
+    }
+  }, [language, i18n]);
 
   const loadNews = async () => {
     setIsLoading(true);

@@ -43,6 +43,48 @@ const resources = {
       "read_full_article": "Ler Artigo Completo",
       "loading_news": "Carregando notícias..."
     }
+  },
+  ES: {
+    translation: {
+      "latest_news": "Últimas Noticias",
+      "search_placeholder": "Buscar monedas (ej: BTC, ETH)...",
+      "no_news": "No se encontraron noticias.",
+      "read_more": "Leer Más",
+      "share": "Compartir",
+      "offline_mode": "Modo Offline",
+      "new_posts_available": "Nuevas publicaciones disponibles",
+      "breaking_news": "Noticias de Última Hora",
+      "price_alert": "Alerta de Precio",
+      "copied": "¡Enlace copiado al portapapeles!",
+      "author": "Autor",
+      "source": "Fuente",
+      "back": "Volver al feed",
+      "language": "Idioma",
+      "fiat": "Moneda Fiduciaria",
+      "read_full_article": "Leer Artículo Completo",
+      "loading_news": "Cargando noticias..."
+    }
+  },
+  FR: {
+    translation: {
+      "latest_news": "Dernières Nouvelles",
+      "search_placeholder": "Rechercher des pièces (ex: BTC, ETH)...",
+      "no_news": "Aucune nouvelle trouvée.",
+      "read_more": "Lire la suite",
+      "share": "Partager",
+      "offline_mode": "Mode Hors Ligne",
+      "new_posts_available": "Nouveaux messages disponibles",
+      "breaking_news": "Dernières Nouvelles",
+      "price_alert": "Alerte de Prix",
+      "copied": "Lien copié dans le presse-papiers !",
+      "author": "Auteur",
+      "source": "Source",
+      "back": "Retour au flux",
+      "language": "Langue",
+      "fiat": "Monnaie Fiduciaire",
+      "read_full_article": "Lire l'article complet",
+      "loading_news": "Chargement des nouvelles..."
+    }
   }
 };
 

@@ -45,6 +45,7 @@ const Settings: React.FC = () => {
                   key={lang.code}
                   onClick={() => {
                     setLanguage(lang.code);
+                    i18n.changeLanguage(lang.code);
                     setIsOpen(false);
                   }}
                   className={`px-2 py-1 text-sm rounded hover:bg-gray-100 dark:hover:bg-gray-700 ${
