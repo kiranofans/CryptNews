@@ -69,6 +69,56 @@ const NewsDetail: React.FC = () => {
     window.open(`https://pinterest.com/pin/create/button/?url=${url}&media=${media}&description=${description}`, '_blank');
   };
 
+  const formatContent = (content: string) => {
+    if (!content) return null;
+
+    // If content is short, just return it
+    if (content.length < 300 && !content.includes('\n')) {
+      return <p className="text-lg leading-relaxed text-gray-800 dark:text-gray-200">{content}</p>;
+    }
+
+    // Check for explicit newlines first
+    if (content.includes('\n')) {
+      return content.split('\n').map((line, i) => {
+        const trimmed = line.trim();
+        if (!trimmed) return null;
+        if (/^[-*•]/.test(trimmed) || /^\d+\./.test(trimmed)) {
+           return <li key={i} className="ml-6 list-disc mb-2 text-lg text-gray-800 dark:text-gray-200 pl-2">{trimmed.replace(/^[-*•]|\d+\.\s*/, '').trim()}</li>;
+        }
+        return <p key={i} className="mb-4 text-lg leading-relaxed text-gray-800 dark:text-gray-200">{line}</p>;
+      });
+    }
+
+    // Heuristic splitting for long blocks
+    const sentences = content.match(/[^.!?]+[.!?]+(\s|$)/g) || [content];
+    const elements: React.ReactNode[] = [];
+    let currentPara: string[] = [];
+
+    sentences.forEach((sentence, i) => {
+      const trimmed = sentence.trim();
+      // Check for bullet points embedded in text
+      if (/^[-*•]/.test(trimmed) || /^\d+\./.test(trimmed)) {
+         if (currentPara.length > 0) {
+           elements.push(<p key={`p-${i}`} className="mb-4 text-lg leading-relaxed text-gray-800 dark:text-gray-200">{currentPara.join('')}</p>);
+           currentPara = [];
+         }
+         elements.push(<li key={`li-${i}`} className="ml-6 list-disc mb-2 text-lg text-gray-800 dark:text-gray-200 pl-2">{trimmed.replace(/^[-*•]|\d+\.\s*/, '').trim()}</li>);
+      } else {
+        currentPara.push(sentence);
+        if (currentPara.join('').length > 400) { // Split after ~400 chars
+           elements.push(<p key={`p-${i}`} className="mb-4 text-lg leading-relaxed text-gray-800 dark:text-gray-200">{currentPara.join('')}</p>);
+           currentPara = [];
+        }
+      }
+    });
+
+    if (currentPara.length > 0) {
+      elements.push(<p key="last" className="mb-4 text-lg leading-relaxed text-gray-800 dark:text-gray-200">{currentPara.join('')}</p>);
+    }
+
+    return elements;
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
@@ -144,9 +194,7 @@ const NewsDetail: React.FC = () => {
             {news.title}
           </h1>
           <div className="prose dark:prose-invert max-w-none mb-8">
-            <p className="text-lg leading-relaxed text-gray-800 dark:text-gray-200">
-              {news.body}
-            </p>
+            {formatContent(news.body)}
             {/* Since the API might return truncated content, we usually link to the full article */}
             <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
               <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
