@@ -1,5 +1,5 @@
 {
-  "name": "react-example",
+  "name": "CryptNews",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,6 +7,8 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
+      "deploy": "gh-pages -d dist",
+
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test": "vitest"
@@ -44,4 +46,5 @@
     "vite": "^6.2.0",
     "vitest": "^4.0.18"
   }
+
 }
