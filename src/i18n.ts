@@ -19,7 +19,7 @@ const resources = {
       "back": "Back to feed",
       "language": "Language",
       "fiat": "Fiat Currency",
-      "read_full_article": "Read Full Article",
+      "read_full_article": "Read Original Article",
       "loading_news": "Loading news..."
     }
   },
@@ -40,7 +40,7 @@ const resources = {
       "back": "Voltar ao feed",
       "language": "Idioma",
       "fiat": "Moeda Fiduciária",
-      "read_full_article": "Ler Artigo Completo",
+      "read_full_article": "Ler Artigo Original",
       "loading_news": "Carregando notícias..."
     }
   },
@@ -61,7 +61,7 @@ const resources = {
       "back": "Volver al feed",
       "language": "Idioma",
       "fiat": "Moneda Fiduciaria",
-      "read_full_article": "Leer Artículo Completo",
+      "read_full_article": "Leer Artículo Original",
       "loading_news": "Cargando noticias..."
     }
   },
@@ -82,7 +82,7 @@ const resources = {
       "back": "Retour au flux",
       "language": "Langue",
       "fiat": "Monnaie Fiduciaire",
-      "read_full_article": "Lire l'article complet",
+      "read_full_article": "Lire l'article original",
       "loading_news": "Chargement des nouvelles..."
     }
   }
