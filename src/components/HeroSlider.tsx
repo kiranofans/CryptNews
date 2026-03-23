@@ -50,9 +50,11 @@ const HeroSlider: React.FC = () => {
         data-pin-nopin="true"
         onError={(e) => {
           const target = e.target as HTMLImageElement;
-          const fallback = `https://picsum.photos/seed/${currentNews.id}/1200/800`;
+          const fallback = `https://picsum.photos/seed/${currentNews.id.substring(0,6)}/1200/800`;
           if (target.src !== fallback) {
             target.src = fallback;
+          } else {
+            target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzFmMjkzNyIvPjwvc3ZnPg==';
           }
         }}
 

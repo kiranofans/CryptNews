@@ -63,8 +63,11 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
     const articles = response.data.articles || [];
     return articles
       .filter((a: any) => {
-        const sourceStr = (a.source || '').toLowerCase();
-        return !sourceStr.includes('feds') && !sourceStr.includes('fca');
+        const textToCheck = `${a.source || ''} ${a.title || ''} ${a.category || ''}`.toLowerCase();
+        return !textToCheck.includes('feds') && 
+               !textToCheck.includes('federal') &&
+               !textToCheck.includes('fca') && 
+               !textToCheck.includes('uk finance');
       })
       .map(mapArticleToNewsItem);
   } catch (err) {
@@ -91,8 +94,11 @@ export const fetchNewsByCoin = async (coin: string, _lang: string = 'EN') => {
     const articles = response.data.articles || [];
     return articles
       .filter((a: any) => {
-        const sourceStr = (a.source || '').toLowerCase();
-        return !sourceStr.includes('feds') && !sourceStr.includes('fca');
+        const textToCheck = `${a.source || ''} ${a.title || ''} ${a.category || ''}`.toLowerCase();
+        return !textToCheck.includes('feds') && 
+               !textToCheck.includes('federal') &&
+               !textToCheck.includes('fca') && 
+               !textToCheck.includes('uk finance');
       })
       .map(mapArticleToNewsItem);
   } catch (err) {
