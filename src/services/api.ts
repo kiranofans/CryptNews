@@ -9,16 +9,14 @@ const api = axios.create({
 const mapArticleToNewsItem = (article: any) => {
   // Normalize link: lowercase, trim, remove query params, remove trailing slash
   const normalizedLink = (article.link || '').toLowerCase().trim().split('?')[0].replace(/\/$/, '');
-  
+
   // Use API id if available, fallback to a safe hash of the link
   const safeId = article.id || normalizedLink.replace(/[^a-z0-9]/gi, '').slice(-16);
-  // Safe seed for placeholder images
-  const titleSeed = (article.title || 'crypto').replace(/[^a-z0-9]/gi, '').substring(0, 8);
-  
+
   return {
     id: safeId,
     title: article.title,
-    imageurl: `https://picsum.photos/seed/${titleSeed}/600/400`,
+    imageurl: article.imageUrl,
     body: article.description || '',
     url: article.link,
     source: article.source,

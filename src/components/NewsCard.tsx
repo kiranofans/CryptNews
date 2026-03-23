@@ -4,16 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Share2, Twitter, Facebook } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-interface NewsItem {
-  id: string;
-  title: string;
-  imageurl: string;
-  body: string;
-  url: string;
-  source: string;
-  published_on: number;
-  categories: string;
-}
+import { NewsItem } from '../types/news';
 
 interface NewsCardProps {
   news: NewsItem;
@@ -75,7 +66,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
           className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
           loading="lazy"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/crypto/600/400';
+            (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${news.id}/600/400`;
           }}
         />
         

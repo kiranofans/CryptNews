@@ -48,7 +48,7 @@ const HeroSlider: React.FC = () => {
         className="w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
         loading="lazy"
         onError={(e) => {
-          (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/crypto/1200/800';
+          (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${currentNews.id}/1200/800`;
         }}
       />
       <div className="absolute bottom-0 left-0 right-0 p-3 md:p-6 z-20 text-white">

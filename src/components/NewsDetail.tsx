@@ -129,7 +129,7 @@ const NewsDetail: React.FC = () => {
             alt={news.title}
             className="w-full h-full object-cover"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/crypto/1200/800';
+              (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${news.id}/1200/800`;
             }}
           />
           
@@ -204,10 +204,14 @@ const NewsDetail: React.FC = () => {
                 href={news.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                className="w-full md:w-auto inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 active:scale-95 group"
               >
-                {t('read_full_article')} at the source
+                <span className="mr-2">{t('read_full_article')}</span>
+                <Share2 className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               </a>
+              <p className="mt-4 text-center md:text-left text-sm text-gray-400 dark:text-gray-500 italic">
+                {t('source')}: {news.source}
+              </p>
             </div>
           </div>
         </div>
