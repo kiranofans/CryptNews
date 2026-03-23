@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { Share2, ArrowLeft, Twitter, Facebook, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { PinterestWidget } from './PinterestWidget';
-import { fetchFullContent } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 
 const NewsDetail: React.FC = () => {
@@ -13,8 +12,6 @@ const NewsDetail: React.FC = () => {
   const { cachedNews } = useStore();
   const { t } = useTranslation();
   const [news, setNews] = useState<any | null>(null);
-  const [fullContent, setFullContent] = useState<string | null>(null);
-  const [isExtracting, setIsExtracting] = useState(false);
 
   useEffect(() => {
     if (id && cachedNews) {
@@ -24,28 +21,6 @@ const NewsDetail: React.FC = () => {
       }
     }
   }, [id, cachedNews]);
-
-  useEffect(() => {
-    const getFullContent = async () => {
-      if (news?.url && !fullContent && !isExtracting) {
-        setIsExtracting(true);
-        try {
-          const content = await fetchFullContent(news.url);
-          if (content) {
-            setFullContent(content);
-          }
-        } catch (err) {
-          console.error('Failed to fetch full content:', err);
-        } finally {
-          setIsExtracting(false);
-        }
-      }
-    };
-
-    if (news) {
-      getFullContent();
-    }
-  }, [news]);
 
   if (!news) {
     return (
@@ -220,43 +195,20 @@ const NewsDetail: React.FC = () => {
             {news.title}
           </h1>
           <div className="prose dark:prose-invert max-w-none mb-8">
-            {fullContent ? (
-              <div className="markdown-content">
-                <ReactMarkdown>{fullContent}</ReactMarkdown>
-              </div>
-            ) : isExtracting ? (
-              <div className="flex flex-col items-center justify-center py-12 space-y-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
-                <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-                <p className="text-gray-500 dark:text-gray-400 font-medium tracking-wide">
-                  Extracting complete article details...
-                </p>
-              </div>
-            ) : (
-              <>
-                {formatContent(news.body)}
-                <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800 shadow-sm">
-                  <div className="flex items-start space-x-3 mb-4">
-                    <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg">
-                      <Share2 className="w-5 h-5 text-blue-600 dark:text-blue-300" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-blue-900 dark:text-blue-100">Full Article Preview</p>
-                      <p className="text-sm text-blue-700 dark:text-blue-300">
-                        We could not automatically extract the full text. Visit the source for the complete story.
-                      </p>
-                    </div>
-                  </div>
-                  <a
-                    href={news.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg hover:shadow-blue-500/25 active:transform active:scale-95"
-                  >
-                    {t('read_full_article')}
-                  </a>
-                </div>
-              </>
-            )}
+            <div className="markdown-content">
+              <ReactMarkdown>{news.body}</ReactMarkdown>
+            </div>
+            
+            <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+              <a
+                href={news.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              >
+                {t('read_full_article')} at the source
+              </a>
+            </div>
           </div>
         </div>
       </article>
