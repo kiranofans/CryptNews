@@ -72,8 +72,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
             if (target.src !== fallback) {
               target.src = fallback;
             } else {
-              // Final fallback to prevent broken image icon if picsum fails/rate-limits
-              target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTVlN2ViIi8+PC9zdmc+'; // simple gray box
+              target.onerror = null;
             }
           }}
 

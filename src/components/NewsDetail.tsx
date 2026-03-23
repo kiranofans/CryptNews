@@ -135,7 +135,7 @@ const NewsDetail: React.FC = () => {
               if (target.src !== fallback) {
                 target.src = fallback;
               } else {
-                target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjgwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzFmMjkzNyIvPjwvc3ZnPg==';
+                target.onerror = null;
               }
             }}
 

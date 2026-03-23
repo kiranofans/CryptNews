@@ -61,6 +61,10 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
   try {
     const response = await api.get(`/api/news?page=${page}&limit=20`);
     const articles = response.data.articles || [];
+    
+    // Distinguish between true empty feed and an empty array due to local filters
+    if (articles.length === 0) return null;
+
     return articles
       .filter((a: any) => {
         const textToCheck = `${a.source || ''} ${a.title || ''} ${a.category || ''}`.toLowerCase();
@@ -72,7 +76,7 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
       .map(mapArticleToNewsItem);
   } catch (err) {
     console.error('fetchNews error:', err);
-    return [];
+    return null;
   }
 };
 

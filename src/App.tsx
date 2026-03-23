@@ -195,7 +195,9 @@ const App: React.FC = () => {
     setError(null);
     try {
       const news = await fetchNews(i18n.language);
-      setCachedNews(news);
+      if (news !== null) {
+        setCachedNews(news);
+      }
       setNewPostsAvailable(false);
     } catch (err) {
       console.error('Failed to fetch news', err);

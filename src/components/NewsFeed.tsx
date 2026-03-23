@@ -12,6 +12,7 @@ const NewsFeed: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [apiPage, setApiPage] = useState(2);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMoreApi, setHasMoreApi] = useState(true);
   const itemsPerPage = 20;
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -22,6 +23,7 @@ const NewsFeed: React.FC = () => {
       setCachedNews(news);
       setApiPage(2);
       setCurrentPage(1);
+      setHasMoreApi(true);
       setNewPostsAvailable(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -52,34 +54,40 @@ const NewsFeed: React.FC = () => {
   const currentItems = filteredNews.slice(0, indexOfLastItem);
   // Check if we have more local items OR if we can fetch more from API (only when not searching)
   const hasMoreLocal = indexOfLastItem < filteredNews.length;
-  const canFetchMore = !searchTerm && cachedNews.length > 0 && !hasMoreLocal;
+  const canFetchMore = !searchTerm && cachedNews.length > 0 && !hasMoreLocal && hasMoreApi;
   const hasMore = hasMoreLocal || canFetchMore;
 
   useEffect(() => {
+    let unmounted = false;
     const observer = new IntersectionObserver(
       async (entries) => {
         if (entries[0].isIntersecting && !isFetchingMore) {
           if (hasMoreLocal) {
-            setIsFetchingMore(true);
-            setTimeout(() => {
-              setCurrentPage((prev) => prev + 1);
-              setIsFetchingMore(false);
-            }, 800);
+            // Unhide local items instantly
+            setCurrentPage((prev) => prev + 1);
           } else if (canFetchMore) {
             setIsFetchingMore(true);
             try {
               const olderNews = await fetchNews(i18n.language, apiPage);
+              if (unmounted) return;
               
-              if (olderNews && olderNews.length > 0) {
+              setApiPage((prev) => prev + 1);
+              
+              if (olderNews === null) {
+                setHasMoreApi(false);
+              } else if (olderNews.length > 0) {
                 appendCachedNews(olderNews);
-                setApiPage((prev) => prev + 1);
+                // Reveal the newly loaded items instantly
                 setCurrentPage((prev) => prev + 1);
               }
             } catch (err) {
               console.error('Failed to fetch older news', err);
+              setHasMoreApi(false);
             } finally {
-              setIsLoading(false);
-              setIsFetchingMore(false);
+              if (!unmounted) {
+                setIsLoading(false);
+                setIsFetchingMore(false);
+              }
             }
           }
         }
