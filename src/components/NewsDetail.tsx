@@ -128,9 +128,15 @@ const NewsDetail: React.FC = () => {
             src={news.imageurl}
             alt={news.title}
             className="w-full h-full object-cover"
+            data-pin-nopin="true"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${news.id}/1200/800`;
+              const target = e.target as HTMLImageElement;
+              const fallback = `https://picsum.photos/seed/${news.id}/1200/800`;
+              if (target.src !== fallback) {
+                target.src = fallback;
+              }
             }}
+
           />
           
           {/* Pinterest Widget - Desktop Only */}

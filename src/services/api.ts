@@ -61,7 +61,12 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
   try {
     const response = await api.get(`/api/news?page=${page}&limit=20`);
     const articles = response.data.articles || [];
-    return articles.map(mapArticleToNewsItem);
+    return articles
+      .filter((a: any) => {
+        const sourceStr = (a.source || '').toLowerCase();
+        return !sourceStr.includes('feds') && !sourceStr.includes('fca');
+      })
+      .map(mapArticleToNewsItem);
   } catch (err) {
     console.error('fetchNews error:', err);
     return [];
@@ -84,7 +89,12 @@ export const fetchNewsByCoin = async (coin: string, _lang: string = 'EN') => {
   try {
     const response = await api.get(`/api/search?q=${coin}`);
     const articles = response.data.articles || [];
-    return articles.map(mapArticleToNewsItem);
+    return articles
+      .filter((a: any) => {
+        const sourceStr = (a.source || '').toLowerCase();
+        return !sourceStr.includes('feds') && !sourceStr.includes('fca');
+      })
+      .map(mapArticleToNewsItem);
   } catch (err) {
     console.error('fetchNewsByCoin error:', err);
     return [];

@@ -47,9 +47,15 @@ const HeroSlider: React.FC = () => {
         alt={currentNews.title}
         className="w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
         loading="lazy"
+        data-pin-nopin="true"
         onError={(e) => {
-          (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${currentNews.id}/1200/800`;
+          const target = e.target as HTMLImageElement;
+          const fallback = `https://picsum.photos/seed/${currentNews.id}/1200/800`;
+          if (target.src !== fallback) {
+            target.src = fallback;
+          }
         }}
+
       />
       <div className="absolute bottom-0 left-0 right-0 p-3 md:p-6 z-20 text-white">
         <span className="bg-red-600 text-white text-[10px] md:text-xs font-bold px-2 py-0.5 md:py-1 rounded uppercase mb-1 md:mb-2 inline-block">

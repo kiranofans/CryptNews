@@ -65,9 +65,15 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
           alt={news.title}
           className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
           loading="lazy"
+          data-pin-nopin="true"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${news.id}/600/400`;
+            const target = e.target as HTMLImageElement;
+            const fallback = `https://picsum.photos/seed/${news.id}/600/400`;
+            if (target.src !== fallback) {
+              target.src = fallback;
+            }
           }}
+
         />
         
         {/* Pinterest Button - Desktop Only */}
