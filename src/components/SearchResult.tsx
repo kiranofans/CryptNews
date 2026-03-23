@@ -16,7 +16,7 @@ const SearchResult: React.FC = () => {
   const itemsPerPage = 20;
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const filteredNews = cachedNews.filter((news) => {
+  const filteredNews = (cachedNews && Array.isArray(cachedNews) ? cachedNews : []).filter((news) => {
     if (!query) return false;
     const term = query.toLowerCase().trim();
     

@@ -6,7 +6,7 @@ const resources = {
     translation: {
       "latest_news": "Latest News",
       "search_placeholder": "Search coins (e.g. BTC, ETH)...",
-      "no_news": "No news found.",
+      "no_news": "We are sorry, but the server is temporarily down. Please take a rest and try again later",
       "read_more": "Read More",
       "share": "Share",
       "offline_mode": "Offline Mode",

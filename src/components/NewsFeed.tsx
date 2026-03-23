@@ -28,7 +28,7 @@ const NewsFeed: React.FC = () => {
     }
   };
 
-  const filteredNews = cachedNews.filter((news) => {
+  const filteredNews = (cachedNews && Array.isArray(cachedNews) ? cachedNews : []).filter((news) => {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase().trim();
     if (!term) return true;
@@ -65,9 +65,9 @@ const NewsFeed: React.FC = () => {
           } else if (canFetchMore) {
             setIsFetchingMore(true);
             try {
-              const lastNews = cachedNews[cachedNews.length - 1];
-              // Fetch older news using the timestamp of the last item
-              const olderNews = await fetchNews(i18n.language, lastNews.published_on);
+              // Calculate next page (assuming 20 items per page)
+              const nextPage = Math.floor(cachedNews.length / itemsPerPage) + 1;
+              const olderNews = await fetchNews(i18n.language, nextPage);
               
               if (olderNews && olderNews.length > 0) {
                 appendCachedNews(olderNews);
