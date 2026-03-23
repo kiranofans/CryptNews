@@ -6,16 +6,23 @@ const api = axios.create({
 });
 
 // Helper to map new API article to old NewsItem format
-const mapArticleToNewsItem = (article: any) => ({
-  id: btoa(article.link).replace(/[/+=]/g, '').slice(-16), // Use the last 16 chars of base64 link for uniqueness
-  title: article.title,
-  imageurl: 'https://picsum.photos/seed/' + btoa(article.title).substring(0, 8) + '/600/400', // Placeholder image
-  body: article.description || '',
-  url: article.link,
-  source: article.source,
-  published_on: Math.floor(new Date(article.pubDate).getTime() / 1000),
-  categories: article.category || 'general'
-});
+const mapArticleToNewsItem = (article: any) => {
+  // Use API id if available, fallback to a safe hash of the link
+  const safeId = article.id || article.link.replace(/[^a-z0-9]/gi, '').slice(-16);
+  // Safe seed for placeholder images
+  const titleSeed = (article.title || 'crypto').replace(/[^a-z0-9]/gi, '').substring(0, 8);
+  
+  return {
+    id: safeId,
+    title: article.title,
+    imageurl: `https://picsum.photos/seed/${titleSeed}/600/400`,
+    body: article.description || '',
+    url: article.link,
+    source: article.source,
+    published_on: Math.floor(new Date(article.pubDate).getTime() / 1000),
+    categories: article.category || 'general'
+  };
+};
 
 // Add a request interceptor
 api.interceptors.request.use(

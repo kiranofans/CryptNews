@@ -10,6 +10,7 @@ const NewsFeed: React.FC = () => {
   const { cachedNews, searchTerm, isLoading, newPostsAvailable, setCachedNews, appendCachedNews, setNewPostsAvailable, setIsLoading } = useStore();
   const { t, i18n } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
+  const [apiPage, setApiPage] = useState(2);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const itemsPerPage = 20;
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -49,7 +50,7 @@ const NewsFeed: React.FC = () => {
   const currentItems = filteredNews.slice(0, indexOfLastItem);
   // Check if we have more local items OR if we can fetch more from API (only when not searching)
   const hasMoreLocal = indexOfLastItem < filteredNews.length;
-  const canFetchMore = !searchTerm && cachedNews.length > 0;
+  const canFetchMore = !searchTerm && cachedNews.length > 0 && !hasMoreLocal;
   const hasMore = hasMoreLocal || canFetchMore;
 
   useEffect(() => {
@@ -65,13 +66,11 @@ const NewsFeed: React.FC = () => {
           } else if (canFetchMore) {
             setIsFetchingMore(true);
             try {
-              // Calculate next page (assuming 20 items per page)
-              const nextPage = Math.floor(cachedNews.length / itemsPerPage) + 1;
-              const olderNews = await fetchNews(i18n.language, nextPage);
+              const olderNews = await fetchNews(i18n.language, apiPage);
               
               if (olderNews && olderNews.length > 0) {
                 appendCachedNews(olderNews);
-                // Increment page to show the newly fetched items
+                setApiPage((prev) => prev + 1);
                 setCurrentPage((prev) => prev + 1);
               }
             } catch (err) {
@@ -90,7 +89,7 @@ const NewsFeed: React.FC = () => {
     }
 
     return () => observer.disconnect();
-  }, [hasMoreLocal, canFetchMore, isFetchingMore, cachedNews, i18n.language, appendCachedNews, searchTerm]);
+  }, [hasMoreLocal, canFetchMore, isFetchingMore, cachedNews, i18n.language, appendCachedNews, searchTerm, apiPage]);
 
   return (
     <div className="container mx-auto px-4 pt-2 pb-8 relative">
