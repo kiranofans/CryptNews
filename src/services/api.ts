@@ -83,4 +83,14 @@ export const fetchNewsByCoin = async (coin: string, _lang: string = 'EN') => {
   }
 };
 
+export const fetchFullContent = async (url: string) => {
+  try {
+    const response = await api.get(`/api/extract?url=${encodeURIComponent(url)}`);
+    return response.data.content || null;
+  } catch (err) {
+    console.error('fetchFullContent error:', err);
+    return null;
+  }
+};
+
 export default api;
