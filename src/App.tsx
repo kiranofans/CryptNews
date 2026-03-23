@@ -187,7 +187,10 @@ const App: React.FC = () => {
     }
   }, [language, i18n]);
 
-  const loadNews = async () => {
+  const loadNews = async (force: boolean = false) => {
+    if (!force && cachedNews.length > 0) {
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -205,7 +208,7 @@ const App: React.FC = () => {
   useEffect(() => {
     loadNews();
 
-    // Poll for new news every minute
+    // Poll for new news every 5 minutes
     const interval = setInterval(async () => {
       try {
         const latestNews = await fetchNews(i18n.language);
@@ -224,7 +227,7 @@ const App: React.FC = () => {
       } catch (e) {
         // Silent fail on poll
       }
-    }, 60000);
+    }, 300000); // 5 minutes
 
     return () => clearInterval(interval);
   }, [i18n.language]); // Depend on i18n.language instead of setLanguage

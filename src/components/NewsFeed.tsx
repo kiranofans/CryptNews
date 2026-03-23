@@ -20,6 +20,8 @@ const NewsFeed: React.FC = () => {
     try {
       const news = await fetchNews(i18n.language);
       setCachedNews(news);
+      setApiPage(2);
+      setCurrentPage(1);
       setNewPostsAvailable(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -76,6 +78,7 @@ const NewsFeed: React.FC = () => {
             } catch (err) {
               console.error('Failed to fetch older news', err);
             } finally {
+              setIsLoading(false);
               setIsFetchingMore(false);
             }
           }

@@ -35,14 +35,21 @@ export const useStore = create<AppState>()(
       searchHistory: [],
       setLanguage: (lang) => set({ language: lang }),
       setFiat: (fiat) => set({ fiat }),
-      setCachedNews: (news) => set({ cachedNews: Array.isArray(news) ? news : [] }),
+      setCachedNews: (news) => {
+        if (!Array.isArray(news)) return set({ cachedNews: [] });
+        // Deduplicate incoming array by ID first, then by Title (normalized)
+        const uniqueById = new Map(news.map((n) => [n.id, n]));
+        const uniqueByTitle = new Map(Array.from(uniqueById.values()).map((n) => [String(n.title ?? '').toLowerCase().trim(), n]));
+        set({ cachedNews: Array.from(uniqueByTitle.values()) });
+      },
       appendCachedNews: (news) =>
         set((state) => {
           if (!Array.isArray(news)) return state;
-          // Filter out duplicates based on ID
-          const existingIds = new Set((state.cachedNews || []).map((n) => n.id));
-          const uniqueNewNews = news.filter((n) => !existingIds.has(n.id));
-          return { cachedNews: [...(state.cachedNews || []), ...uniqueNewNews] };
+          // Merge and deduplicate by ID, then by Title
+          const allNews = [...(state.cachedNews || []), ...news];
+          const uniqueById = new Map(allNews.map((n) => [n.id, n]));
+          const uniqueByTitle = new Map(Array.from(uniqueById.values()).map((n) => [String(n.title ?? '').toLowerCase().trim(), n]));
+          return { cachedNews: Array.from(uniqueByTitle.values()) };
         }),
       setSearchTerm: (term) => set({ searchTerm: term }),
       setIsLoading: (loading) => set({ isLoading: loading }),
