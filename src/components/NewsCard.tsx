@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { Share2, Twitter, Facebook } from 'lucide-react';
@@ -9,35 +9,6 @@ import { NewsItem } from '../types/news';
 interface NewsCardProps {
   news: NewsItem;
 }
-
-interface ImageWithRetryProps {
-  src: string;
-  alt: string;
-  newsId: string;
-}
-
-// Retry once, then Picsum fallback, then clean empty box
-const ImageWithRetry: React.FC<ImageWithRetryProps> = ({ src, alt, newsId }) => {
-  const [attempt, setAttempt] = useState(0);
-  const fallback = `https://picsum.photos/seed/${newsId.substring(0, 6)}/600/400`;
-
-  if (attempt >= 2) {
-    // Final failure: show a clean empty placeholder (no broken icon, no text)
-    return <div className="w-full h-full bg-gray-200 dark:bg-gray-600" />;
-  }
-
-  return (
-    <img
-      key={attempt}
-      src={attempt === 1 ? fallback : src}
-      alt=""
-      className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-      loading="lazy"
-      data-pin-nopin="true"
-      onError={() => setAttempt((a) => a + 1)}
-    />
-  );
-};
 
 const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
   const { t } = useTranslation();
@@ -88,8 +59,25 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full border border-gray-100 dark:border-gray-700 group">
-      <Link to={`/news/${news.id}`} className="block relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
-        <ImageWithRetry src={news.imageurl} alt={news.title} newsId={news.id} />
+      <Link to={`/news/${news.id}`} className="block relative h-48 overflow-hidden">
+        <img
+          src={news.imageurl}
+          alt={news.title}
+          className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+          data-pin-nopin="true"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            const fallback = `https://picsum.photos/seed/${news.id.substring(0,6)}/600/400`;
+            if (target.src !== fallback) {
+              target.src = fallback;
+            } else {
+              target.onerror = null;
+            }
+          }}
+
+        />
+        
         {/* Pinterest Button - Desktop Only */}
         <button
           onClick={handlePinterestShare}
