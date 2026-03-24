@@ -196,8 +196,6 @@ const App: React.FC = () => {
     setError(null);
     setDebugPayload(null);
     try {
-      // Modify fetchNews to return the raw payload or we pull it directly here for testing
-      const { fetchNews } = await import('./services/api');
       const news = await fetchNews(i18n.language);
       
       setDebugPayload(JSON.stringify(news, null, 2));
