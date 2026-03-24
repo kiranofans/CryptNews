@@ -68,7 +68,16 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
     // Distinguish between true empty feed and an empty array due to local filters
     if (articles.length === 0) return null;
 
-    return articles.map(mapArticleToNewsItem);
+    const filterFn = (a: any) => {
+      const text = `${a.source || ''} ${a.title || ''} ${a.category || ''}`.toLowerCase();
+      return !text.includes('feds') &&
+             !text.includes('federal') &&
+             !text.includes('fca') &&
+             !text.includes('uk finance');
+    };
+    const filtered = articles.filter(filterFn);
+    // Fall back to all articles if filter removes everything
+    return (filtered.length > 0 ? filtered : articles).map(mapArticleToNewsItem);
   } catch (err: any) {
     console.error('fetchNews error:', err);
     throw new Error(err.message || 'Failed to fetch news');
@@ -91,7 +100,16 @@ export const fetchNewsByCoin = async (coin: string, _lang: string = 'EN') => {
   try {
     const response = await api.get(`/api/search?q=${coin}`);
     const articles = response.data.articles || [];
-    return articles.map(mapArticleToNewsItem);
+    const filterFn = (a: any) => {
+      const text = `${a.source || ''} ${a.title || ''} ${a.category || ''}`.toLowerCase();
+      return !text.includes('feds') &&
+             !text.includes('federal') &&
+             !text.includes('fca') &&
+             !text.includes('uk finance');
+    };
+    const filtered = articles.filter(filterFn);
+    // Fall back to all articles if filter removes everything
+    return (filtered.length > 0 ? filtered : articles).map(mapArticleToNewsItem);
   } catch (err: any) {
     console.error('fetchNewsByCoin error:', err);
     throw new Error(err.message || 'Failed to fetch news by coin');
