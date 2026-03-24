@@ -58,7 +58,7 @@ const HeaderContent: React.FC = () => {
       <div className="order-2 md:order-1 w-full">
         <PriceTicker />
       </div>
-      
+
       <div className="container mx-auto px-4 py-3 flex justify-between items-center order-1 md:order-2 w-full">
         <div className="flex items-center space-x-4">
           {!isHomePage && (
@@ -107,7 +107,7 @@ const HeaderContent: React.FC = () => {
               </button>
             )}
           </form>
-          
+
           {/* Search History Dropdown */}
           {showHistory && searchHistory.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
@@ -197,7 +197,7 @@ const App: React.FC = () => {
     setDebugPayload(null);
     try {
       const news = await fetchNews(i18n.language);
-      
+
       setDebugPayload(JSON.stringify(news, null, 2));
 
       // Check for successful fetch but empty results (not null but empty array)
@@ -255,8 +255,10 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const base = (import.meta as any).env?.BASE_URL ?? '/CryptNews';
+
   return (
-    <Router>
+    <Router basename={base}>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300 font-sans">
         <HeaderContent />
 
