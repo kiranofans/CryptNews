@@ -25,6 +25,17 @@ export default defineConfig(({mode}) => {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
+      proxy: {
+        '/api': {
+          target: 'https://cryptocurrency.cv',
+          changeOrigin: true,
+          headers: {
+            'Origin': 'https://cryptocurrency.cv',
+            'Referer': 'https://cryptocurrency.cv/',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+          }
+        },
+      },
     },
     base: './',
   };

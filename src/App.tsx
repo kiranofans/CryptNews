@@ -179,6 +179,7 @@ const App: React.FC = () => {
   const { cachedNews, setCachedNews, setIsLoading, setNewPostsAvailable, language } = useStore();
   const { t, i18n } = useTranslation();
   const [error, setError] = useState<string | null>(null);
+  const [debugPayload, setDebugPayload] = useState<string | null>(null);
 
   // Sync language from store to i18n on mount
   useEffect(() => {
@@ -193,15 +194,30 @@ const App: React.FC = () => {
     }
     setIsLoading(true);
     setError(null);
+    setDebugPayload(null);
     try {
+      // Modify fetchNews to return the raw payload or we pull it directly here for testing
+      const { fetchNews } = await import('./services/api');
       const news = await fetchNews(i18n.language);
+      
+      setDebugPayload(JSON.stringify(news, null, 2));
+
+      // Check for successful fetch but empty results (not null but empty array)
       if (news !== null) {
+        if (news.length === 0) {
+          setError('API request successful, but no news articles passed the filters.');
+        } else {
+          // Successfully fetched news!
+          console.log(`Successfully fetched ${news.length} news articles.`);
+        }
         setCachedNews(news);
       }
       setNewPostsAvailable(false);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch news', err);
-      setError('Failed to load news. Showing cached content if available.');
+      // Detailed error tracking
+      setDebugPayload(err.response ? JSON.stringify(err.response.data, null, 2) : err.toString());
+      setError(`Error: ${err.message || 'Unknown error'}. Please check your connection or CORS settings.`);
     } finally {
       setIsLoading(false);
     }

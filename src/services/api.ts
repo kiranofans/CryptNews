@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://cryptocurrency.cv',
+  // Use relative path '' so axios correctly appends to the current window.location.origin
+  // Instead of an empty string, we omit baseURL in dev so axios defaults to relative to current origin!
+  // @ts-ignore
+  baseURL: import.meta.env.DEV ? undefined : 'https://cryptocurrency.cv',
   timeout: 30000,
 });
 
@@ -61,7 +64,7 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
   try {
     const response = await api.get(`/api/news?page=${page}&limit=20`);
     const articles = response.data.articles || [];
-    
+
     // Distinguish between true empty feed and an empty array due to local filters
     if (articles.length === 0) return null;
 
@@ -74,9 +77,9 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
                !textToCheck.includes('uk finance');
       })
       .map(mapArticleToNewsItem);
-  } catch (err) {
+  } catch (err: any) {
     console.error('fetchNews error:', err);
-    return null;
+    throw new Error(err.message || 'Failed to fetch news');
   }
 };
 
@@ -86,9 +89,9 @@ export const fetchPrices = async (coins: string[], fiats: string[]) => {
   try {
     const response = await axios.get(`https://min-api.cryptocompare.com/data/pricemulti?fsyms=${coins.join(',')}&tsyms=${fiats.join(',')}`);
     return response.data;
-  } catch (err) {
+  } catch (err: any) {
     console.error('fetchPrices error:', err);
-    return {};
+    throw new Error(err.message || 'Failed to fetch prices');
   }
 };
 
@@ -105,9 +108,9 @@ export const fetchNewsByCoin = async (coin: string, _lang: string = 'EN') => {
                !textToCheck.includes('uk finance');
       })
       .map(mapArticleToNewsItem);
-  } catch (err) {
+  } catch (err: any) {
     console.error('fetchNewsByCoin error:', err);
-    return [];
+    throw new Error(err.message || 'Failed to fetch news by coin');
   }
 };
 
