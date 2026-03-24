@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 const api = axios.create({
-  // Use relative path '' so axios correctly appends to the current window.location.origin
-  // Instead of an empty string, we omit baseURL in dev so axios defaults to relative to current origin!
+  // '/' ensures axios resolves /api/news to http://<host>:3000/api/news correctly
+  // regardless of whether you access from localhost or a network IP.
   // @ts-ignore
-  baseURL: import.meta.env.DEV ? undefined : 'https://cryptocurrency.cv',
+  baseURL: import.meta.env.DEV ? '/' : 'https://cryptocurrency.cv',
   timeout: 30000,
 });
 
@@ -68,15 +68,7 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
     // Distinguish between true empty feed and an empty array due to local filters
     if (articles.length === 0) return null;
 
-    return articles
-      .filter((a: any) => {
-        const textToCheck = `${a.source || ''} ${a.title || ''} ${a.category || ''}`.toLowerCase();
-        return !textToCheck.includes('feds') && 
-               !textToCheck.includes('federal') &&
-               !textToCheck.includes('fca') && 
-               !textToCheck.includes('uk finance');
-      })
-      .map(mapArticleToNewsItem);
+    return articles.map(mapArticleToNewsItem);
   } catch (err: any) {
     console.error('fetchNews error:', err);
     throw new Error(err.message || 'Failed to fetch news');
@@ -99,15 +91,7 @@ export const fetchNewsByCoin = async (coin: string, _lang: string = 'EN') => {
   try {
     const response = await api.get(`/api/search?q=${coin}`);
     const articles = response.data.articles || [];
-    return articles
-      .filter((a: any) => {
-        const textToCheck = `${a.source || ''} ${a.title || ''} ${a.category || ''}`.toLowerCase();
-        return !textToCheck.includes('feds') && 
-               !textToCheck.includes('federal') &&
-               !textToCheck.includes('fca') && 
-               !textToCheck.includes('uk finance');
-      })
-      .map(mapArticleToNewsItem);
+    return articles.map(mapArticleToNewsItem);
   } catch (err: any) {
     console.error('fetchNewsByCoin error:', err);
     throw new Error(err.message || 'Failed to fetch news by coin');

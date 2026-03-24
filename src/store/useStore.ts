@@ -84,17 +84,9 @@ export const useStore = create<AppState>()(
           if (error) {
             console.error('an error occurred during hydration', error);
           } else if (rehydratedState) {
-            // Ensure cachedNews is an array after hydration and clean out unwanted sources
+            // Ensure cachedNews is an array after hydration
             if (!Array.isArray(rehydratedState.cachedNews)) {
               rehydratedState.cachedNews = [];
-            } else {
-              rehydratedState.cachedNews = rehydratedState.cachedNews.filter((n: any) => {
-                 const textToCheck = `${n.source || ''} ${n.title || ''} ${n.categories || ''}`.toLowerCase();
-                 return !textToCheck.includes('feds') && 
-                        !textToCheck.includes('federal') &&
-                        !textToCheck.includes('fca') && 
-                        !textToCheck.includes('uk finance');
-              });
             }
           }
         };
