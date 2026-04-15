@@ -1,10 +1,19 @@
 import axios from 'axios';
 
+const isBrowser = typeof window !== 'undefined';
+const isDev = import.meta.env.DEV;
+
+// In Astro, server-side code (SSR/SSG) runs in Node.js where relative domains like '/' fail in Axios.
+// - Server side: Always use the absolute remote data URL.
+// - Client side (dev): Use '/' to engage the Vite proxy to avoid CORS.
+// - Client side (prod): Use the absolute remote data URL.
+let baseURL = 'https://cryptocurrency.cv';
+if (isDev && isBrowser) {
+  baseURL = '/';
+}
+
 const api = axios.create({
-  // '/' ensures axios resolves /api/news to http://<host>:3000/api/news correctly
-  // regardless of whether you access from localhost or a network IP.
-  // @ts-ignore
-  baseURL: import.meta.env.DEV ? '/' : 'https://cryptocurrency.cv',
+  baseURL,
   timeout: 30000,
 });
 

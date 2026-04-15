@@ -1,0 +1,37 @@
+---
+import '../index.css';
+import { ClientRouter } from 'astro:transitions';
+import HeaderContent from '../components/HeaderContent';
+import NewsPoller from '../components/NewsPoller';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <title>CryptNews - Crypto News Aggregator</title>
+    <meta name="description" content="Latest cryptocurrency news and updates." />
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300 font-sans flex flex-col">
+    <HeaderContent client:load />
+    <NewsPoller client:load />
+    
+    <main class="pb-8 flex-grow">
+      <slot />
+    </main>
+    
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 mt-auto">
+      <div class="container mx-auto px-4 text-center text-gray-500 dark:text-gray-400 font-mono text-sm">
+        <div class="flex justify-center space-x-4 mb-4">
+          <a href="/" class="hover:text-blue-500 transition-colors">Home</a>
+          <a href="/contact" class="hover:text-blue-500 transition-colors">Contact</a>
+        </div>
+        <p>&copy; {new Date().getFullYear()} CryptNews. All rights reserved.</p>
+        <p class="mt-2">Data provided by CryptoCompare</p>
+      </div>
+    </footer>
+  </body>
+</html>

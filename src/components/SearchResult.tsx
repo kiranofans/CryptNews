@@ -3,13 +3,18 @@ import { useStore } from '../store/useStore';
 import NewsCard from './NewsCard';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Search } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+
 
 const SearchResult: React.FC = () => {
   const { cachedNews } = useStore();
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get('q') || '';
+  const [query, setQuery] = useState('');
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setQuery(params.get('q') || '');
+    }
+  }, []);
   
   const [currentPage, setCurrentPage] = useState(1);
   const [isFetchingMore, setIsFetchingMore] = useState(false);

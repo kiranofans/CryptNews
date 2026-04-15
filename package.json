@@ -4,19 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
+    "dev": "astro dev --port=3000 --host=0.0.0.0",
+    "build": "astro build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "preview": "vite preview",
+    "preview": "astro preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test": "vitest"
   },
   "dependencies": {
-    "@google/genai": "^1.29.0",
+    "@astrojs/react": "^4.1.2",
+    "@emailjs/browser": "^4.4.1",
     "@tailwindcss/vite": "^4.1.14",
-    "@vitejs/plugin-react": "^5.0.4",
+    "astro": "^6.1.7",
     "axios": "^1.13.5",
     "better-sqlite3": "^12.4.1",
     "date-fns": "^4.1.0",
@@ -29,7 +30,6 @@
     "react-dom": "^19.0.0",
     "react-i18next": "^16.5.4",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.13.0",
     "vite": "^6.2.0",
     "zustand": "^5.0.11"
   },

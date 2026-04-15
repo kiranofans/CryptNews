@@ -1,29 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import NewsFeed from './components/NewsFeed';
-import NewsDetail from './components/NewsDetail';
-import PriceTicker from './components/PriceTicker';
-import Settings from './components/Settings';
-import { useStore } from './store/useStore';
-import { Search, X, RefreshCw, AlertCircle, ArrowLeft } from 'lucide-react';
+import PriceTicker from './PriceTicker';
+import Settings from './Settings';
+import { useStore } from '../store/useStore';
+import { Search, X, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { fetchNews } from './services/api';
-import './i18n';
-
-import SearchResult from './components/SearchResult';
-
-// ... imports ...
+import '../i18n';
 
 const HeaderContent: React.FC = () => {
   const { searchTerm, setSearchTerm, searchHistory, addToSearchHistory } = useStore();
   const { t } = useTranslation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const searchRef = React.useRef<HTMLDivElement>(null);
+  
+  // Use state to identify home page instead of useLocation
+  const [isHomePage, setIsHomePage] = useState(true);
+  useEffect(() => {
+    setIsHomePage(window.location.pathname === '/' || window.location.pathname === '/CryptNews' || window.location.pathname === '/CryptNews/');
+  }, []);
 
-  const isHomePage = location.pathname === '/';
+  const searchRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -31,7 +26,6 @@ const HeaderContent: React.FC = () => {
         setShowHistory(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -40,7 +34,7 @@ const HeaderContent: React.FC = () => {
     e.preventDefault();
     if (searchTerm.trim()) {
       addToSearchHistory(searchTerm.trim());
-      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+      window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
       setIsSearchOpen(false);
       setShowHistory(false);
     }
@@ -48,10 +42,14 @@ const HeaderContent: React.FC = () => {
 
   const handleHistoryClick = (term: string) => {
     setSearchTerm(term);
-    navigate(`/search?q=${encodeURIComponent(term)}`);
+    window.location.href = `/search?q=${encodeURIComponent(term)}`;
     setIsSearchOpen(false);
     setShowHistory(false);
   };
+
+  const handleGoBack = () => {
+    window.history.back();
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm flex flex-col">
@@ -63,14 +61,14 @@ const HeaderContent: React.FC = () => {
         <div className="flex items-center space-x-4">
           {!isHomePage && (
             <button
-              onClick={() => navigate(-1)}
+              onClick={handleGoBack}
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"
               aria-label="Go back"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
           )}
-          <Link to="/" className="flex items-center space-x-2 group flex-shrink-0">
+          <a href="/" className="flex items-center space-x-2 group flex-shrink-0">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:shadow-blue-500/50 transition-all duration-300 transform group-hover:scale-110">
               C
             </div>
@@ -80,7 +78,7 @@ const HeaderContent: React.FC = () => {
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 sm:hidden">
               CryptNews
             </span>
-          </Link>
+          </a>
         </div>
 
         {/* Desktop Search Bar */}
@@ -175,119 +173,4 @@ const HeaderContent: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
-  const { cachedNews, setCachedNews, setIsLoading, setNewPostsAvailable, language } = useStore();
-  const { t, i18n } = useTranslation();
-  const [error, setError] = useState<string | null>(null);
-  const [debugPayload, setDebugPayload] = useState<string | null>(null);
-
-  // Sync language from store to i18n on mount
-  useEffect(() => {
-    if (language && i18n.language !== language) {
-      i18n.changeLanguage(language);
-    }
-  }, [language, i18n]);
-
-  const loadNews = async (force: boolean = false) => {
-    if (!force && cachedNews.length > 0) {
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    setDebugPayload(null);
-    try {
-      const news = await fetchNews(i18n.language);
-
-      setDebugPayload(JSON.stringify(news, null, 2));
-
-      // Check for successful fetch but empty results (not null but empty array)
-      if (news !== null) {
-        if (news.length === 0) {
-          setError('API request successful, but no news articles passed the filters.');
-        } else {
-          // Successfully fetched news!
-          console.log(`Successfully fetched ${news.length} news articles.`);
-        }
-        setCachedNews(news);
-      }
-      setNewPostsAvailable(false);
-    } catch (err: any) {
-      console.error('Failed to fetch news', err);
-      // Detailed error tracking
-      setDebugPayload(err.response ? JSON.stringify(err.response.data, null, 2) : err.toString());
-      setError(`Error: ${err.message || 'Unknown error'}. Please check your connection or CORS settings.`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadNews();
-
-    // Poll for new news every 5 minutes
-    const interval = setInterval(async () => {
-      try {
-        const latestNews = await fetchNews(i18n.language);
-        if (latestNews && latestNews.length > 0 && cachedNews.length > 0) {
-          if (latestNews[0].id !== cachedNews[0].id) {
-            setNewPostsAvailable(true);
-            // Optional: Show browser notification
-            if (Notification.permission === 'granted') {
-              new Notification('CryptNews', {
-                body: t('new_posts_available'),
-                icon: '/vite.svg'
-              });
-            }
-          }
-        }
-      } catch (e) {
-        // Silent fail on poll
-      }
-    }, 300000); // 5 minutes
-
-    return () => clearInterval(interval);
-  }, [i18n.language]); // Depend on i18n.language instead of setLanguage
-
-  // Request notification permission
-  useEffect(() => {
-    if ('Notification' in window && Notification.permission !== 'granted') {
-      Notification.requestPermission();
-    }
-  }, []);
-
-  const base = (import.meta as any).env?.BASE_URL ?? '/CryptNews';
-
-  return (
-    <Router basename={base}>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300 font-sans">
-        <HeaderContent />
-
-        {error && (
-          <div className="container mx-auto px-4 mt-4">
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-sm flex items-start" role="alert">
-              <AlertCircle className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
-              <p>{error}</p>
-            </div>
-          </div>
-        )}
-
-        <main className="pb-8">
-          <Routes>
-            <Route path="/" element={<NewsFeed />} />
-            <Route path="/news/:id" element={<NewsDetail />} />
-            <Route path="/search" element={<SearchResult />} />
-          </Routes>
-        </main>
-
-        <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 mt-auto">
-          <div className="container mx-auto px-4 text-center text-gray-500 dark:text-gray-400 font-mono text-sm">
-            <p>&copy; {new Date().getFullYear()} CryptNews. All rights reserved.</p>
-            <p className="mt-2">Data provided by CryptoCompare</p>
-          </div>
-        </footer>
-      </div>
-    </Router>
-  );
-};
-
-export default App;
+export default HeaderContent;

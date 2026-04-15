@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/ContactForm';
+---
+
+<Layout>
+  <div class="container mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600 mb-4">
+        Contact Us
+      </h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        We'd love to hear from you. Whether you have a question about features, pricing, or anything else, our team is ready to answer all your questions.
+      </p>
+    </div>
+    
+    <ContactForm client:load />
+  </div>
+</Layout>

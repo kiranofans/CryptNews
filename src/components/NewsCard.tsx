@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
 import { formatDistanceToNow } from 'date-fns';
 import { Share2, Twitter, Facebook } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +59,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full border border-gray-100 dark:border-gray-700 group">
-      <Link to={`/news/${news.id}`} className="block relative h-48 overflow-hidden">
+      <a href={`/news/${news.id}`} className="block relative h-48 overflow-hidden">
         <img
           src={news.imageurl}
           alt={news.title}
@@ -90,7 +90,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
           </svg>
           Save
         </button>
-      </Link>
+      </a>
       <div className="p-4 flex flex-col flex-grow">
         <div className="flex items-center justify-between mb-2 text-xs text-gray-500 dark:text-gray-400">
           <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded-full font-medium">
@@ -98,18 +98,18 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
           </span>
           <span>{formatDistanceToNow(new Date(news.published_on * 1000), { addSuffix: true })}</span>
         </div>
-        <Link to={`/news/${news.id}`} className="block mb-4 flex-grow">
+        <a href={`/news/${news.id}`} className="block mb-4 flex-grow">
           <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             {news.title}
           </h3>
-        </Link>
+        </a>
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
-          <Link
-            to={`/news/${news.id}`}
+          <a
+            href={`/news/${news.id}`}
             className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
           >
             {t('read_more')}
-          </Link>
+          </a>
           <div className="flex items-center space-x-2">
             <button
               onClick={handleTwitterShare}

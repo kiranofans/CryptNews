@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+
 
 const HeroSlider: React.FC = () => {
   const { cachedNews } = useStore();
@@ -33,9 +33,9 @@ const HeroSlider: React.FC = () => {
         <div className="flex-1 overflow-hidden relative h-full flex items-center mask-image-linear-gradient">
              <div className="whitespace-nowrap animate-marquee inline-flex items-center">
                 {tickerNews.map((news, idx) => (
-                    <Link key={`${news.id}-${idx}`} to={`/news/${news.id}`} className="inline-block mx-4 text-[9px] md:text-xs font-medium hover:underline opacity-90 hover:opacity-100 transition-opacity">
+                    <a key={`${news.id}-${idx}`} href={`/news/${news.id}`} className="inline-block mx-4 text-[9px] md:text-xs font-medium hover:underline opacity-90 hover:opacity-100 transition-opacity">
                         {news.title} •
-                    </Link>
+                    </a>
                 ))}
              </div>
         </div>
@@ -63,11 +63,11 @@ const HeroSlider: React.FC = () => {
         <span className="bg-red-600 text-white text-[10px] md:text-xs font-bold px-2 py-0.5 md:py-1 rounded uppercase mb-1 md:mb-2 inline-block">
           {t('breaking_news')}
         </span>
-        <Link to={`/news/${currentNews.id}`} className="block hover:underline">
+        <a href={`/news/${currentNews.id}`} className="block hover:underline">
           <h2 className="text-base sm:text-2xl md:text-3xl font-bold mb-1 md:mb-2 line-clamp-2 drop-shadow-md leading-tight">
             {currentNews.title}
           </h2>
-        </Link>
+        </a>
         <p className="text-xs sm:text-sm md:text-base text-gray-200 line-clamp-2 mb-2 md:mb-4 drop-shadow-sm hidden sm:block overflow-hidden">
           {currentNews.body.length > 150 ? `${currentNews.body.substring(0, 150)}...` : currentNews.body}
         </p>

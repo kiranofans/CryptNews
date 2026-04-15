@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import NewsDetail from '../../components/NewsDetail';
+import { fetchNews } from '../../services/api';
+
+export async function getStaticPaths() {
+  try {
+    const news = await fetchNews('en');
+    if (!news) return [];
+    
+    return news.map((item: any) => ({
+      params: { id: item.id },
+      props: { initialNews: item },
+    }));
+  } catch (e) {
+    return [];
+  }
+}
+
+const { id } = Astro.params;
+const { initialNews } = Astro.props;
+---
+
+<Layout>
+  <NewsDetail id={id} initialNews={initialNews} client:load />
+</Layout>

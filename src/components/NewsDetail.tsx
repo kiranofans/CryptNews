@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
-import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Share2, ArrowLeft, Twitter, Facebook, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { PinterestWidget } from './PinterestWidget';
 import ReactMarkdown from 'react-markdown';
 
-const NewsDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+interface NewsDetailProps {
+  id?: string;
+  initialNews?: any;
+}
+
+const NewsDetail: React.FC<NewsDetailProps> = ({ id, initialNews }) => {
   const { cachedNews } = useStore();
   const { t } = useTranslation();
-  const [news, setNews] = useState<any | null>(null);
+  const [news, setNews] = useState<any | null>(initialNews || null);
 
   useEffect(() => {
     if (id && cachedNews) {
@@ -28,9 +31,9 @@ const NewsDetail: React.FC = () => {
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
         <p className="text-gray-500 mb-4">{t('loading_news')}...</p>
         <p className="text-sm text-gray-400">If this takes too long, the news might not be available anymore.</p>
-        <Link to="/" className="mt-4 text-blue-600 hover:underline">
+        <a href="/" className="mt-4 text-blue-600 hover:underline">
           {t('back')}
-        </Link>
+        </a>
       </div>
     );
   }
