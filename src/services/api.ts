@@ -1,21 +1,18 @@
 import axios from 'axios';
 
-const isBrowser = typeof window !== 'undefined';
-const isDev = import.meta.env.DEV;
-
-// In Astro, server-side code (SSR/SSG) runs in Node.js where relative domains like '/' fail in Axios.
-// - Server side: Always use the absolute remote data URL.
-// - Client side (dev): Use '/' to engage the Vite proxy to avoid CORS.
-// - Client side (prod): Use the absolute remote data URL.
-let baseURL = 'https://cryptocurrency.cv';
-if (isDev && isBrowser) {
-  baseURL = '/';
-}
-
+// Always call the API directly from the browser.
+// The cryptocurrency.cv API allows CORS (access-control-allow-origin: *),
+// so there is no need for a proxy. The proxy was actually causing 403 BOT_BLOCKED
+// errors because it strips real browser User-Agent and Origin headers.
 const api = axios.create({
-  baseURL,
+  baseURL: 'https://cryptocurrency.cv',
   timeout: 30000,
+  headers: {
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+  },
 });
+
 
 // Helper to map new API article to old NewsItem format
 const mapArticleToNewsItem = (article: any) => {
@@ -69,13 +66,22 @@ api.interceptors.response.use(
   }
 );
 
-export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
+export interface FetchNewsResult {
+  articles: ReturnType<typeof mapArticleToNewsItem>[];
+  hasMore: boolean;
+}
+
+export const fetchNews = async (lang: string = 'EN', page: number = 1): Promise<FetchNewsResult | null> => {
   try {
     const response = await api.get(`/api/news?page=${page}&limit=20`);
-    const articles = response.data.articles || [];
+    const data = response.data;
+    const articles = data.articles || [];
 
-    // Distinguish between true empty feed and an empty array due to local filters
+    // API signals no more pages — return null so callers can stop
     if (articles.length === 0) return null;
+
+    // Use the API's own pagination info when available
+    const hasMore: boolean = data.pagination?.hasMore ?? articles.length >= 20;
 
     const filterFn = (a: any) => {
       const text = `${a.source || ''} ${a.title || ''} ${a.category || ''}`.toLowerCase();
@@ -85,8 +91,10 @@ export const fetchNews = async (lang: string = 'EN', page: number = 1) => {
              !text.includes('uk finance');
     };
     const filtered = articles.filter(filterFn);
-    // Fall back to all articles if filter removes everything
-    return (filtered.length > 0 ? filtered : articles).map(mapArticleToNewsItem);
+    return {
+      articles: (filtered.length > 0 ? filtered : articles).map(mapArticleToNewsItem),
+      hasMore,
+    };
   } catch (err: any) {
     console.error('fetchNews error:', err);
     throw new Error(err.message || 'Failed to fetch news');

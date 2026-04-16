@@ -19,11 +19,13 @@ const NewsFeed: React.FC = () => {
   const handleRefresh = async () => {
     setIsLoading(true);
     try {
-      const news = await fetchNews(i18n.language);
-      setCachedNews(news);
+      const result = await fetchNews(i18n.language);
+      if (result) {
+        setCachedNews(result.articles);
+        setHasMoreApi(result.hasMore);
+      }
       setApiPage(2);
       setCurrentPage(1);
-      setHasMoreApi(true);
       setNewPostsAvailable(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -68,17 +70,18 @@ const NewsFeed: React.FC = () => {
           } else if (canFetchMore) {
             setIsFetchingMore(true);
             try {
-              const olderNews = await fetchNews(i18n.language, apiPage);
+              const result = await fetchNews(i18n.language, apiPage);
               if (unmounted) return;
-              
-              setApiPage((prev) => prev + 1);
-              
-              if (olderNews === null) {
+
+              if (result === null) {
                 setHasMoreApi(false);
-              } else if (olderNews.length > 0) {
-                appendCachedNews(olderNews);
-                // Reveal the newly loaded items instantly
-                setCurrentPage((prev) => prev + 1);
+              } else {
+                setApiPage((prev) => prev + 1);
+                setHasMoreApi(result.hasMore);
+                if (result.articles.length > 0) {
+                  appendCachedNews(result.articles);
+                  setCurrentPage((prev) => prev + 1);
+                }
               }
             } catch (err) {
               console.error('Failed to fetch older news', err);
@@ -92,7 +95,7 @@ const NewsFeed: React.FC = () => {
           }
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0, rootMargin: '0px 0px 300px 0px' }
     );
 
     if (loaderRef.current) {

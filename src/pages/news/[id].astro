@@ -4,17 +4,9 @@ import NewsDetail from '../../components/NewsDetail';
 import { fetchNews } from '../../services/api';
 
 export async function getStaticPaths() {
-  try {
-    const news = await fetchNews('en');
-    if (!news) return [];
-    
-    return news.map((item: any) => ({
-      params: { id: item.id },
-      props: { initialNews: item },
-    }));
-  } catch (e) {
-    return [];
-  }
+  // The cryptocurrency.cv API blocks server-side (non-browser) requests.
+  // News detail pages hydrate client-side using the zustand cached news store.
+  return [];
 }
 
 const { id } = Astro.params;

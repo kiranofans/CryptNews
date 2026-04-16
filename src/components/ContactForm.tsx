@@ -16,9 +16,9 @@ const ContactForm: React.FC = () => {
     setStatus('idle');
 
     try {
-      const serviceId = import.meta.env.PUBLIC_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
-      const templateId = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID';
-      const publicKey = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
+      const serviceId = import.meta.env.PUBLIC_EMAILJS_SERVICE_ID || 'service_6r35nck';
+      const templateId = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID || 'template_h0k37j5';
+      const publicKey = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY || '6iWrJ5lrgdzAgyWGp';
 
       await emailjs.sendForm(
         serviceId,

@@ -14,14 +14,6 @@ export default defineConfig({
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime'],
     },
-    server: {
-      proxy: {
-        '/api': {
-          target: 'https://cryptocurrency.cv',
-          changeOrigin: true,
-        }
-      }
-    }
   },
   output: 'static',
 });

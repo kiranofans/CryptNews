@@ -20,9 +20,9 @@ const NewsPoller: React.FC = () => {
     }
     setIsLoading(true);
     try {
-      const news = await fetchNews(i18n.language);
-      if (news !== null) {
-        setCachedNews(news);
+      const result = await fetchNews(i18n.language);
+      if (result !== null) {
+        setCachedNews(result.articles);
       }
       setNewPostsAvailable(false);
     } catch (err: any) {
@@ -38,9 +38,9 @@ const NewsPoller: React.FC = () => {
     // Poll for new news every 5 minutes
     const interval = setInterval(async () => {
       try {
-        const latestNews = await fetchNews(i18n.language);
-        if (latestNews && latestNews.length > 0 && cachedNews.length > 0) {
-          if (latestNews[0].id !== cachedNews[0].id) {
+        const result = await fetchNews(i18n.language);
+        if (result && result.articles.length > 0 && cachedNews.length > 0) {
+          if (result.articles[0].id !== cachedNews[0].id) {
             setNewPostsAvailable(true);
             // Optional: Show browser notification
             if (Notification.permission === 'granted') {
