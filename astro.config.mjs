@@ -3,11 +3,17 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  // Use React integration
   integrations: [react()],
-  // Integrate Vite plugins (Tailwind V4 uses Vite plugin)
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+    },
+    // Pre-bundle react-dom/client so Vite converts the CJS module.exports
+    // into a proper ESM module with named exports (required for createRoot).
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime'],
+    },
     server: {
       proxy: {
         '/api': {
@@ -17,6 +23,5 @@ export default defineConfig({
       }
     }
   },
-  // SSG mode output
   output: 'static',
 });
